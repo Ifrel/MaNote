@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Source" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="MaNote" />
+    <module name="MaNote" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

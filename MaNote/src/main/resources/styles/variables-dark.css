@@ -1,0 +1,61 @@
+/* ==========================================================================
+   MaNote Design System — Thème Sombre (Variables & Tokens)
+   ========================================================================== */
+
+.root {
+    /* Couleurs de fond et de surface */
+    -fx-bg-app: #0F172A; /* Slate 900 */
+    -fx-bg-sidebar: #1E293B; /* Slate 800 */
+    -fx-bg-surface: #1E293B; /* Card Background (Slate 800) */
+    -fx-bg-surface-elevated: #334155; /* Modal / Popover (Slate 700) */
+    -fx-bg-surface-alt: #0F172A; /* Slate 900 */
+    -fx-bg-input: #0F172A;
+
+    /* Bordures et séparateurs */
+    -fx-border-subtle: #334155; /* Slate 700 */
+    -fx-border-medium: #475569; /* Slate 600 */
+    -fx-border-focus: #818CF8; /* Indigo 400 */
+
+    /* Typographie & Textes */
+    -fx-text-primary: #F8FAFC; /* Slate 50 */
+    -fx-text-secondary: #94A3B8; /* Slate 400 */
+    -fx-text-tertiary: #64748B; /* Slate 500 */
+    -fx-text-inverse: #0F172A;
+
+    /* Palette primaire */
+    -fx-primary-50: #1E1B4B;
+    -fx-primary-100: #312E81;
+    -fx-primary-200: #3730A3;
+    -fx-primary-500: #6366F1;
+    -fx-primary-600: #818CF8; /* Indigo plus clair pour le contraste en dark */
+    -fx-primary-700: #A5B4FC;
+
+    /* Palette sémantique */
+    -fx-success-bg: rgba(16, 185, 129, 0.15);
+    -fx-success-border: rgba(16, 185, 129, 0.35);
+    -fx-success-text: #34D399;
+    -fx-success-solid: #10B981;
+
+    -fx-warning-bg: rgba(245, 158, 11, 0.15);
+    -fx-warning-border: rgba(245, 158, 11, 0.35);
+    -fx-warning-text: #FBBF24;
+    -fx-warning-solid: #F59E0B;
+
+    -fx-danger-bg: rgba(239, 68, 68, 0.15);
+    -fx-danger-border: rgba(239, 68, 68, 0.35);
+    -fx-danger-text: #F87171;
+    -fx-danger-solid: #EF4444;
+
+    -fx-info-bg: rgba(59, 130, 246, 0.15);
+    -fx-info-border: rgba(59, 130, 246, 0.35);
+    -fx-info-text: #60A5FA;
+    -fx-info-solid: #3B82F6;
+
+    -fx-badge-neutral-bg: #334155;
+    -fx-badge-neutral-text: #CBD5E1;
+
+    /* Ombres subtiles */
+    -fx-card-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.30), 12, 0, 0, 4);
+    -fx-dialog-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.60), 30, 0, 0, 10);
+    -fx-glow-primary: dropshadow(gaussian, rgba(129, 140, 248, 0.35), 10, 0, 0, 0);
+}
