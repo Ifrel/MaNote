@@ -1,0 +1,697 @@
+/* ==========================================================================
+   MaNote — Design system : base & composants
+   ========================================================================== */
+
+.root {
+    -fx-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: -fx-bg-app;
+    -fx-text-fill: -fx-text-primary;
+    -fx-focus-color: -fx-border-focus;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ---------- Typographie ---------- */
+.heading-xl {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.heading-lg {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.heading-md {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.heading-sm {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.text-muted {
+    -fx-text-fill: -fx-text-secondary;
+}
+
+.text-tertiary {
+    -fx-text-fill: -fx-text-tertiary;
+}
+
+.text-accent {
+    -fx-text-fill: -fx-primary-600;
+    -fx-font-weight: bold;
+}
+
+/* ---------- Icônes (Ikonli utilise -fx-icon-color, pas -fx-text-fill) ---------- */
+.ikonli-font-icon {
+    -fx-icon-color: -fx-text-secondary;
+}
+
+.ikonli-font-icon.text-tertiary {
+    -fx-icon-color: -fx-text-tertiary;
+}
+
+.ikonli-font-icon.text-accent {
+    -fx-icon-color: -fx-primary-600;
+}
+
+.btn-primary .ikonli-font-icon {
+    -fx-icon-color: -fx-on-primary;
+}
+
+.btn-danger .ikonli-font-icon {
+    -fx-icon-color: -fx-on-solid;
+}
+
+.btn-icon:hover .ikonli-font-icon {
+    -fx-icon-color: -fx-text-primary;
+}
+
+/* ---------- Surfaces ---------- */
+.card {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 14px;
+    -fx-border-color: -fx-border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 14px;
+    -fx-padding: 18px;
+    -fx-effect: -fx-card-shadow;
+}
+
+.card-interactive {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 14px;
+    -fx-border-color: -fx-border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 14px;
+    -fx-padding: 18px;
+    -fx-effect: -fx-card-shadow;
+    -fx-cursor: hand;
+}
+
+.card-interactive:hover {
+    -fx-border-color: -fx-primary-200;
+    -fx-effect: -fx-card-shadow-hover;
+}
+
+.stat-card {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 14px;
+    -fx-border-color: -fx-border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 14px;
+    -fx-padding: 18px;
+    -fx-effect: -fx-card-shadow;
+}
+
+.stat-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.stat-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-secondary;
+}
+
+/* Hero du tableau de bord */
+.hero {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 20px;
+    -fx-border-color: -fx-border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+    -fx-padding: 26px 30px;
+    -fx-effect: -fx-card-shadow;
+}
+
+.hero-metrics {
+    -fx-border-color: -fx-border-subtle transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 18px 0 0 0;
+}
+
+.metric {
+    -fx-padding: 0 24px 0 0;
+}
+
+.metric-divided {
+    -fx-border-color: transparent transparent transparent -fx-border-subtle;
+    -fx-border-width: 0 0 0 1px;
+    -fx-padding: 0 24px 0 24px;
+}
+
+.metric-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* Lignes de liste dans une carte */
+.list-row {
+    -fx-border-color: -fx-border-subtle transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 11px 0;
+}
+
+.list-row-first {
+    -fx-border-color: transparent;
+    -fx-padding: 2px 0 11px 0;
+}
+
+/* Pastilles d'icônes */
+.icon-chip {
+    -fx-background-color: -fx-primary-50;
+    -fx-background-radius: 10px;
+    -fx-min-width: 34px;
+    -fx-min-height: 34px;
+    -fx-pref-width: 34px;
+    -fx-pref-height: 34px;
+    -fx-max-width: 34px;
+    -fx-max-height: 34px;
+}
+
+.icon-chip .ikonli-font-icon {
+    -fx-icon-color: -fx-primary-600;
+}
+
+.empty-icon {
+    -fx-background-color: -fx-primary-50;
+    -fx-background-radius: 48px;
+    -fx-min-width: 96px;
+    -fx-min-height: 96px;
+    -fx-pref-width: 96px;
+    -fx-pref-height: 96px;
+    -fx-max-width: 96px;
+    -fx-max-height: 96px;
+}
+
+.empty-icon .ikonli-font-icon {
+    -fx-icon-color: -fx-primary-600;
+}
+
+/* ---------- Anneau de note ---------- */
+.ring-track {
+    -fx-fill: transparent;
+    -fx-stroke: -fx-ring-track;
+}
+
+.ring-fill {
+    -fx-fill: transparent;
+    -fx-stroke: -fx-primary-600;
+}
+
+.ring-fill.tone-success {
+    -fx-stroke: -fx-success-solid;
+}
+
+.ring-fill.tone-info {
+    -fx-stroke: -fx-info-solid;
+}
+
+.ring-fill.tone-warning {
+    -fx-stroke: -fx-warning-solid;
+}
+
+.ring-fill.tone-danger {
+    -fx-stroke: -fx-danger-solid;
+}
+
+.ring-fill.tone-neutral {
+    -fx-stroke: -fx-text-tertiary;
+}
+
+.ring-value {
+    -fx-text-fill: -fx-text-primary;
+}
+
+.ring-caption {
+    -fx-text-fill: -fx-text-tertiary;
+    -fx-font-size: 11px;
+}
+
+.label.tone-success {
+    -fx-text-fill: -fx-success-text;
+}
+
+.label.tone-info {
+    -fx-text-fill: -fx-info-text;
+}
+
+.label.tone-warning {
+    -fx-text-fill: -fx-warning-text;
+}
+
+.label.tone-danger {
+    -fx-text-fill: -fx-danger-text;
+}
+
+.label.tone-neutral {
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* ---------- Boutons ---------- */
+.button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 9px;
+    -fx-border-radius: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.button:disabled {
+    -fx-opacity: 0.5;
+}
+
+.button:focused {
+    -fx-effect: -fx-glow-primary;
+}
+
+.btn-primary {
+    -fx-background-color: -fx-primary-600;
+    -fx-text-fill: -fx-on-primary;
+    -fx-border-color: transparent;
+}
+
+.btn-primary:hover {
+    -fx-background-color: -fx-primary-700;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: derive(-fx-primary-700, -10%);
+}
+
+.btn-secondary {
+    -fx-background-color: -fx-bg-surface;
+    -fx-text-fill: -fx-text-primary;
+    -fx-border-color: -fx-border-medium;
+    -fx-border-width: 1px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: -fx-bg-surface-alt;
+    -fx-border-color: -fx-text-tertiary;
+}
+
+.btn-danger {
+    -fx-background-color: -fx-danger-solid;
+    -fx-text-fill: -fx-on-solid;
+    -fx-border-color: transparent;
+}
+
+.btn-danger:hover {
+    -fx-background-color: derive(-fx-danger-solid, -15%);
+}
+
+.btn-ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-border-color: transparent;
+    -fx-padding: 6px 12px;
+}
+
+.btn-ghost:hover {
+    -fx-background-color: -fx-bg-surface-alt;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.btn-icon {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-padding: 7px;
+    -fx-background-radius: 8px;
+}
+
+.btn-icon:hover {
+    -fx-background-color: -fx-bg-surface-alt;
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* ---------- Badges ---------- */
+.badge {
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-padding: 3px 10px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.badge-success {
+    -fx-background-color: -fx-success-bg;
+    -fx-text-fill: -fx-success-text;
+    -fx-border-color: -fx-success-border;
+    -fx-border-width: 1px;
+}
+
+.badge-warning {
+    -fx-background-color: -fx-warning-bg;
+    -fx-text-fill: -fx-warning-text;
+    -fx-border-color: -fx-warning-border;
+    -fx-border-width: 1px;
+}
+
+.badge-danger {
+    -fx-background-color: -fx-danger-bg;
+    -fx-text-fill: -fx-danger-text;
+    -fx-border-color: -fx-danger-border;
+    -fx-border-width: 1px;
+}
+
+.badge-info {
+    -fx-background-color: -fx-info-bg;
+    -fx-text-fill: -fx-info-text;
+    -fx-border-color: -fx-info-border;
+    -fx-border-width: 1px;
+}
+
+.badge-neutral {
+    -fx-background-color: -fx-badge-neutral-bg;
+    -fx-text-fill: -fx-badge-neutral-text;
+    -fx-border-color: transparent;
+}
+
+/* ---------- Champs ---------- */
+.text-field, .text-area {
+    -fx-background-color: -fx-bg-input;
+    -fx-text-fill: -fx-text-primary;
+    -fx-prompt-text-fill: -fx-text-tertiary;
+    -fx-background-radius: 9px;
+    -fx-border-color: -fx-border-medium;
+    -fx-border-radius: 9px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 12px;
+}
+
+.text-area .content {
+    -fx-background-color: transparent;
+}
+
+.combo-box-base, .date-picker {
+    -fx-background-color: -fx-bg-input;
+    -fx-text-fill: -fx-text-primary;
+    -fx-background-radius: 9px;
+    -fx-border-color: -fx-border-medium;
+    -fx-border-radius: 9px;
+    -fx-border-width: 1px;
+    -fx-padding: 2px 4px;
+}
+
+.text-field:focused, .text-area:focused, .combo-box-base:focused, .date-picker:focused {
+    -fx-border-color: -fx-border-focus;
+    -fx-effect: -fx-glow-primary;
+}
+
+.combo-box-base .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box-base .arrow {
+    -fx-background-color: -fx-text-secondary;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: -fx-text-primary;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -fx-bg-surface-elevated;
+    -fx-border-color: -fx-border-subtle;
+    -fx-background-radius: 9px;
+    -fx-border-radius: 9px;
+    -fx-effect: -fx-dialog-shadow;
+}
+
+.combo-box-popup .list-cell {
+    -fx-padding: 8px 12px;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.combo-box-popup .list-cell:hover, .combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: -fx-bg-surface-alt;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-secondary;
+}
+
+.field-error {
+    -fx-font-size: 11px;
+    -fx-text-fill: -fx-danger-text;
+}
+
+/* ---------- Progression ---------- */
+.progress-bar > .track {
+    -fx-background-color: -fx-bg-surface-alt;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4px;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -fx-primary-600;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4px;
+    -fx-padding: 3px;
+}
+
+/* ---------- Tableaux ---------- */
+.table-view {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 14px;
+    -fx-border-color: -fx-border-subtle;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-padding: 0;
+    -fx-table-cell-border-color: transparent;
+    -fx-effect: -fx-card-shadow;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -fx-bg-surface-alt;
+    -fx-background-radius: 14px 14px 0 0;
+    -fx-border-color: transparent transparent -fx-border-subtle transparent;
+    -fx-border-width: 1px;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 40px;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-alignment: center-left;
+}
+
+.table-view .column-resize-line {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: -fx-bg-surface;
+    -fx-border-color: transparent transparent -fx-border-subtle transparent;
+    -fx-border-width: 1px;
+    -fx-padding: 0;
+    -fx-cell-size: 42px;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: -fx-bg-surface-alt;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: -fx-primary-50;
+}
+
+.table-cell {
+    -fx-text-fill: -fx-text-primary;
+    -fx-alignment: center-left;
+    -fx-padding: 0 14px;
+    -fx-border-color: transparent;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -fx-text-tertiary;
+}
+
+/* ---------- Barre latérale ---------- */
+.sidebar {
+    -fx-background-color: -fx-sidebar-bg;
+    -fx-padding: 24px 14px 18px 14px;
+}
+
+.sidebar .heading-md, .sidebar .heading-sm {
+    -fx-text-fill: -fx-sidebar-text-active;
+}
+
+.sidebar-caption {
+    -fx-text-fill: -fx-sidebar-text;
+    -fx-font-size: 11px;
+}
+
+.brand-chip {
+    -fx-background-color: -fx-sidebar-accent;
+    -fx-background-radius: 11px;
+    -fx-min-width: 38px;
+    -fx-min-height: 38px;
+    -fx-pref-width: 38px;
+    -fx-pref-height: 38px;
+    -fx-max-width: 38px;
+    -fx-max-height: 38px;
+}
+
+.brand-chip .ikonli-font-icon {
+    -fx-icon-color: #0D1B2A;
+}
+
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-text-fill: -fx-sidebar-text;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 14px;
+    -fx-cursor: hand;
+    -fx-alignment: center-left;
+}
+
+.nav-item .ikonli-font-icon {
+    -fx-icon-color: -fx-sidebar-text;
+}
+
+.nav-item:hover {
+    -fx-background-color: -fx-sidebar-hover;
+    -fx-text-fill: -fx-sidebar-text-active;
+}
+
+.nav-item:hover .ikonli-font-icon {
+    -fx-icon-color: -fx-sidebar-text-active;
+}
+
+.nav-item-active {
+    -fx-background-color: -fx-sidebar-active;
+    -fx-background-radius: 10px;
+    -fx-text-fill: -fx-sidebar-text-active;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 14px;
+    -fx-alignment: center-left;
+}
+
+.nav-item-active .ikonli-font-icon {
+    -fx-icon-color: -fx-sidebar-accent;
+}
+
+.sidebar-footer {
+    -fx-border-color: -fx-sidebar-line transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 14px 8px 0 8px;
+}
+
+/* ---------- Barre supérieure ---------- */
+.topbar {
+    -fx-background-color: -fx-bg-app;
+    -fx-border-color: transparent transparent -fx-border-subtle transparent;
+    -fx-border-width: 1px;
+    -fx-padding: 16px 28px;
+    -fx-alignment: center-left;
+}
+
+/* ---------- Défilement ---------- */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-pref-width: 10px;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 10px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -fx-border-medium;
+    -fx-background-radius: 10px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -fx-text-tertiary;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+    -fx-padding: 0;
+    -fx-shape: "";
+}
+
+/* ---------- Infobulles & dialogues ---------- */
+.tooltip {
+    -fx-background-color: -fx-sidebar-bg;
+    -fx-text-fill: -fx-sidebar-text-active;
+    -fx-background-radius: 7px;
+    -fx-font-size: 12px;
+    -fx-padding: 6px 10px;
+}
+
+.dialog-pane {
+    -fx-background-color: -fx-bg-surface-elevated;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-effect: null;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: transparent;
+    -fx-padding: 16px 16px 0 16px;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.dialog-pane > .content.label {
+    -fx-text-fill: -fx-text-secondary;
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-padding: 0 16px 8px 16px;
+}

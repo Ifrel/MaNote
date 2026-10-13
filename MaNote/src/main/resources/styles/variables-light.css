@@ -1,0 +1,86 @@
+/* ==========================================================================
+   MaNote — Thème clair : « papier & encre »
+   Fond gris-bleu très clair, barre latérale encre, accent céruléen.
+   ========================================================================== */
+
+.root {
+    /* Fonds */
+    -fx-bg-app: #F4F6F8;
+    -fx-bg-surface: #FFFFFF;
+    -fx-bg-surface-elevated: #FFFFFF;
+    -fx-bg-surface-alt: #ECF0F3;
+    -fx-bg-input: #FFFFFF;
+
+    /* Barre latérale (encre) */
+    -fx-bg-sidebar: #0D1B2A;
+    -fx-sidebar-bg: #0D1B2A;
+    -fx-sidebar-text: #9FB0C0;
+    -fx-sidebar-text-active: #FFFFFF;
+    -fx-sidebar-hover: rgba(255, 255, 255, 0.06);
+    -fx-sidebar-active: rgba(255, 255, 255, 0.11);
+    -fx-sidebar-accent: #5CC8FF;
+    -fx-sidebar-line: rgba(255, 255, 255, 0.09);
+
+    /* Bordures */
+    -fx-border-subtle: #E3E8ED;
+    -fx-border-medium: #CCD5DD;
+    -fx-border-focus: #0A6FA8;
+
+    /* Textes */
+    -fx-text-primary: #0D1B2A;
+    -fx-text-secondary: #4B5D6E;
+    -fx-text-tertiary: #8896A4;
+    -fx-text-inverse: #FFFFFF;
+
+    /* Accent (céruléen) */
+    -fx-primary-50: #E8F3FA;
+    -fx-primary-100: #D0E7F5;
+    -fx-primary-200: #A6D0EA;
+    -fx-primary-500: #1A86C2;
+    -fx-primary-600: #0A6FA8;
+    -fx-primary-700: #085A89;
+    -fx-on-primary: #FFFFFF;
+    -fx-on-solid: #FFFFFF;
+
+    /* Sémantique */
+    -fx-success-bg: #E8F6EE;
+    -fx-success-border: #BCE5CC;
+    -fx-success-text: #0F5F36;
+    -fx-success-solid: #1E9E5A;
+
+    -fx-warning-bg: #FFF6E5;
+    -fx-warning-border: #F6DDA3;
+    -fx-warning-text: #8A4B08;
+    -fx-warning-solid: #E8960C;
+
+    -fx-danger-bg: #FDECEC;
+    -fx-danger-border: #F5C2C2;
+    -fx-danger-text: #9B1C1C;
+    -fx-danger-solid: #D93A3A;
+
+    -fx-info-bg: #E8F3FA;
+    -fx-info-border: #A6D0EA;
+    -fx-info-text: #085A89;
+    -fx-info-solid: #0A6FA8;
+
+    -fx-badge-neutral-bg: #ECF0F3;
+    -fx-badge-neutral-text: #4B5D6E;
+
+    -fx-ring-track: #E3E8ED;
+
+    /* Ombres */
+    -fx-card-shadow: dropshadow(gaussian, rgba(13, 27, 42, 0.05), 10, 0, 0, 2);
+    -fx-card-shadow-hover: dropshadow(gaussian, rgba(13, 27, 42, 0.10), 18, 0, 0, 6);
+    -fx-dialog-shadow: dropshadow(gaussian, rgba(13, 27, 42, 0.18), 28, 0, 0, 10);
+    -fx-glow-primary: dropshadow(gaussian, rgba(10, 111, 168, 0.28), 7, 0, 0, 0);
+
+    /* Modena : couleurs de base des contrôles non stylés */
+    -fx-base: #ECF0F3;
+    -fx-background: #F4F6F8;
+    -fx-control-inner-background: #FFFFFF;
+    -fx-control-inner-background-alt: #FFFFFF;
+    -fx-accent: #0A6FA8;
+    -fx-selection-bar: #E8F3FA;
+    -fx-selection-bar-non-focused: #E8F3FA;
+    -fx-selection-bar-text: #0D1B2A;
+}

@@ -1,0 +1,78 @@
+/* ==========================================================================
+   MaNote — Thème sombre : « tableau d'encre »
+   ========================================================================== */
+
+.root {
+    -fx-bg-app: #0A121A;
+    -fx-bg-surface: #101A24;
+    -fx-bg-surface-elevated: #17232F;
+    -fx-bg-surface-alt: #0C151D;
+    -fx-bg-input: #0A121A;
+
+    -fx-bg-sidebar: #070D13;
+    -fx-sidebar-bg: #070D13;
+    -fx-sidebar-text: #8496A6;
+    -fx-sidebar-text-active: #FFFFFF;
+    -fx-sidebar-hover: rgba(255, 255, 255, 0.05);
+    -fx-sidebar-active: rgba(92, 200, 255, 0.14);
+    -fx-sidebar-accent: #5CC8FF;
+    -fx-sidebar-line: rgba(255, 255, 255, 0.07);
+
+    -fx-border-subtle: #1D2B38;
+    -fx-border-medium: #2A3B4B;
+    -fx-border-focus: #4FB3E8;
+
+    -fx-text-primary: #E8EEF3;
+    -fx-text-secondary: #98A9B8;
+    -fx-text-tertiary: #627587;
+    -fx-text-inverse: #0A121A;
+
+    -fx-primary-50: #0F2A3B;
+    -fx-primary-100: #123A52;
+    -fx-primary-200: #17506F;
+    -fx-primary-500: #2B9BD6;
+    -fx-primary-600: #4FB3E8;
+    -fx-primary-700: #8AD0F2;
+    -fx-on-primary: #06121B;
+    -fx-on-solid: #FFFFFF;
+
+    -fx-success-bg: rgba(30, 158, 90, 0.16);
+    -fx-success-border: rgba(30, 158, 90, 0.38);
+    -fx-success-text: #4ADE98;
+    -fx-success-solid: #22B36A;
+
+    -fx-warning-bg: rgba(232, 150, 12, 0.16);
+    -fx-warning-border: rgba(232, 150, 12, 0.38);
+    -fx-warning-text: #FBBF4A;
+    -fx-warning-solid: #F0A020;
+
+    -fx-danger-bg: rgba(217, 58, 58, 0.16);
+    -fx-danger-border: rgba(217, 58, 58, 0.38);
+    -fx-danger-text: #F58A8A;
+    -fx-danger-solid: #E04848;
+
+    -fx-info-bg: rgba(79, 179, 232, 0.14);
+    -fx-info-border: rgba(79, 179, 232, 0.38);
+    -fx-info-text: #7CCBF2;
+    -fx-info-solid: #4FB3E8;
+
+    -fx-badge-neutral-bg: #1D2B38;
+    -fx-badge-neutral-text: #B5C3CF;
+
+    -fx-ring-track: #1D2B38;
+
+    -fx-card-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 12, 0, 0, 3);
+    -fx-card-shadow-hover: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 20, 0, 0, 8);
+    -fx-dialog-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.65), 30, 0, 0, 10);
+    -fx-glow-primary: dropshadow(gaussian, rgba(79, 179, 232, 0.38), 8, 0, 0, 0);
+
+    /* Modena : indispensable pour que checkbox, spinner, popups... suivent le thème */
+    -fx-base: #17232F;
+    -fx-background: #0A121A;
+    -fx-control-inner-background: #101A24;
+    -fx-control-inner-background-alt: #101A24;
+    -fx-accent: #4FB3E8;
+    -fx-selection-bar: #0F2A3B;
+    -fx-selection-bar-non-focused: #0F2A3B;
+    -fx-selection-bar-text: #E8EEF3;
+}

@@ -1,0 +1,114 @@
+/* ==========================================================================
+   MaNote — Graphiques
+   ========================================================================== */
+
+.chart {
+    -fx-padding: 8px;
+}
+
+.chart-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.axis {
+    -fx-tick-label-fill: -fx-text-secondary;
+    -fx-tick-label-font-size: 11px;
+}
+
+.axis-label {
+    -fx-text-fill: -fx-text-tertiary;
+    -fx-font-size: 11px;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: -fx-border-subtle;
+    -fx-stroke-dash-array: 2 4;
+}
+
+.chart-alternative-row-fill, .chart-alternative-column-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.axis-tick-mark, .axis-minor-tick-mark {
+    -fx-stroke: transparent;
+}
+
+.axis:left, .axis:bottom {
+    -fx-border-color: transparent;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 6px;
+}
+
+.chart-legend-item {
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-size: 11px;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 4px;
+}
+
+.chart-bar {
+    -fx-background-radius: 6px 6px 0 0;
+}
+
+.bar-chart {
+    -fx-bar-gap: 6;
+    -fx-category-gap: 28;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 2.5px;
+}
+
+.default-color0.chart-bar {
+    -fx-bar-fill: -fx-primary-600;
+}
+
+.default-color1.chart-bar {
+    -fx-bar-fill: -fx-success-solid;
+}
+
+.default-color2.chart-bar {
+    -fx-bar-fill: -fx-warning-solid;
+}
+
+.default-color3.chart-bar {
+    -fx-bar-fill: -fx-danger-solid;
+}
+
+.default-color0.chart-series-line {
+    -fx-stroke: -fx-primary-600;
+}
+
+.default-color1.chart-series-line {
+    -fx-stroke: -fx-success-solid;
+}
+
+.default-color2.chart-series-line {
+    -fx-stroke: -fx-warning-solid;
+}
+
+.default-color3.chart-series-line {
+    -fx-stroke: -fx-danger-solid;
+}
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: -fx-primary-600, -fx-bg-surface;
+    -fx-background-radius: 7px;
+    -fx-padding: 4px;
+}
