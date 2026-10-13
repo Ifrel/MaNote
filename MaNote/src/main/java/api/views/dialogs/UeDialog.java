@@ -1,5 +1,6 @@
 package api.views.dialogs;
 
+import api.views.app.Theme;
 import application.engine.model.SemesterId;
 import application.engine.model.SemesterSummary;
 import application.engine.model.UeDraft;
@@ -29,10 +30,8 @@ public class UeDialog extends Dialog<UeDraft> {
 
         DialogPane pane = getDialogPane();
         pane.getStyleClass().add("card");
-        pane.getStylesheets().addAll(
-                getClass().getResource("/styles/variables-light.css").toExternalForm(),
-                getClass().getResource("/styles/base.css").toExternalForm()
-        );
+        Theme.styleDialog(pane);
+
 
         ButtonType saveBtnType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         pane.getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);

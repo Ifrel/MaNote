@@ -168,15 +168,6 @@ public class AppShell extends BorderPane {
 
     public void applyTheme(UserPreferences.ThemeMode mode) {
         getStylesheets().clear();
-
-        String vars = mode == UserPreferences.ThemeMode.DARK
-                ? getClass().getResource("/styles/variables-dark.css").toExternalForm()
-                : getClass().getResource("/styles/variables-light.css").toExternalForm();
-
-        getStylesheets().addAll(
-                vars,
-                getClass().getResource("/styles/base.css").toExternalForm(),
-                getClass().getResource("/styles/charts.css").toExternalForm()
-        );
+        getStylesheets().setAll(Theme.stylesheets(mode));
     }
 }

@@ -1,5 +1,6 @@
 package api.views.dialogs;
 
+import api.views.app.Theme;
 import application.engine.model.EvaluationSummary;
 import application.engine.model.GradeEntry;
 import javafx.geometry.Insets;
@@ -32,10 +33,8 @@ public class GradeDialog extends Dialog<GradeDialog.GradeDialogResult> {
 
         DialogPane pane = getDialogPane();
         pane.getStyleClass().add("card");
-        pane.getStylesheets().addAll(
-                getClass().getResource("/styles/variables-light.css").toExternalForm(),
-                getClass().getResource("/styles/base.css").toExternalForm()
-        );
+        Theme.styleDialog(pane);
+
 
         ButtonType saveBtnType = new ButtonType("Valider la note", ButtonBar.ButtonData.OK_DONE);
         ButtonType clearBtnType = new ButtonType("Supprimer la note", ButtonBar.ButtonData.OTHER);

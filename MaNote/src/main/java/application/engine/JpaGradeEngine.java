@@ -151,20 +151,10 @@ public class JpaGradeEngine implements GradeEngine {
         int totalCredits = s.getUes().stream().mapToInt(UE::getCredit).sum();
         AcademicYearId yId = s.getAnnee() != null ? new AcademicYearId(s.getAnnee().getId()) : new AcademicYearId(1);
 
-        int totalCount = 0;
-        int gradedCount = 0;
-        int pendingCount = 0;
-        int plannedCount = 0;
-
-        for (UE u : s.getUes()) {
-            for (Note n : u.getNotes()) {
-                totalCount++;
-                if ("GRADED".equals(n.getStatus())) gradedCount++;
-                else if ("AWAITING_GRADE".equals(n.getStatus())) pendingCount++;
-                else plannedCount++;
-            }
-        }
-        EvaluationProgress progress = new EvaluationProgress(totalCount, gradedCount, pendingCount, plannedCount);
+        List<Note> allNotes = s.getUes().stream()
+                .flatMap(u -> u.getNotes().stream())
+                .toList();
+        EvaluationProgress progress = progressOf(allNotes);
 
         int semNum = Character.isDigit(s.getNum()) ? Character.getNumericValue(s.getNum()) : 1;
         LocalDate start = (semNum % 2 != 0) ? LocalDate.of(2025, 9, 1) : LocalDate.of(2026, 1, 15);
@@ -246,18 +236,13 @@ public class JpaGradeEngine implements GradeEngine {
         ValidationInfo val = calculationService.computeUeValidation(avg, ue.getCredit());
         SemesterId semId = ue.getSemestre() != null ? new SemesterId(ue.getSemestre().getId()) : new SemesterId(1);
 
-        int totalCount = ue.getNotes().size();
-        int gradedCount = (int) ue.getNotes().stream().filter(n -> "GRADED".equals(n.getStatus())).count();
-        int pendingCount = (int) ue.getNotes().stream().filter(n -> "AWAITING_GRADE".equals(n.getStatus())).count();
-        int plannedCount = (int) ue.getNotes().stream().filter(n -> "PLANNED".equals(n.getStatus())).count();
-
-        EvaluationProgress progress = new EvaluationProgress(totalCount, gradedCount, pendingCount, plannedCount);
+        EvaluationProgress progress = progressOf(ue.getNotes());
 
         Optional<String> attention = Optional.empty();
         if (avg instanceof ComputedResult.Value v && v.value() < 10.0) {
             attention = Optional.of("Moyenne actuelle inférieure à 10/20");
-        } else if (pendingCount > 0) {
-            attention = Optional.of(pendingCount + " note(s) en attente");
+        } else if (progress.awaitingGrade() > 0) {
+            attention = Optional.of(progress.awaitingGrade() + " note(s) en attente");
         }
 
         return new UeSummary(
@@ -329,28 +314,28 @@ public class JpaGradeEngine implements GradeEngine {
 
         EvaluationType type = new EvaluationType(n.getType() != null ? n.getType() : "CC", n.getType() != null ? n.getType() : "CC");
 
-        EvaluationStatus status;
-        try {
-            status = EvaluationStatus.valueOf(n.getStatus().toUpperCase());
-        } catch (Exception e) {
-            status = EvaluationStatus.PLANNED;
-        }
+        EvaluationStatus status = statusOf(n);
 
         LocalDate date = null;
         if (n.getDate() != null) {
             date = n.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         }
 
+        // La note n'est exposée que si le statut est GRADED (invariant du contrat)
         GradeEntry gradeEntry = null;
-        if (n.isAbsent()) {
-            gradeEntry = new GradeEntry.Absence(n.isJustified());
-        } else if (n.getValeur() != null) {
-            gradeEntry = new GradeEntry.Score(n.getValeur(), n.getBareme() > 0 ? n.getBareme() : 20.0);
+        if (status == EvaluationStatus.GRADED) {
+            if (n.isAbsent()) {
+                gradeEntry = new GradeEntry.Absence(n.isJustified());
+            } else if (n.getValeur() != null) {
+                gradeEntry = new GradeEntry.Score(n.getValeur(), n.getBareme() > 0 ? n.getBareme() : 20.0);
+            }
         }
 
-        ComputedResult normalized = calculationService.normalizeNoteOn20(n)
+        ComputedResult normalized = status == EvaluationStatus.GRADED
+                ? calculationService.normalizeNoteOn20(n)
                 .map(v -> (ComputedResult) new ComputedResult.Value(v, 20.0, ResultNature.FINAL, "Normalisée /20"))
-                .orElseGet(() -> new ComputedResult.NotComputable("Note non disponible"));
+                .orElseGet(() -> new ComputedResult.NotComputable("Note non disponible"))
+                : new ComputedResult.NotComputable("Note non disponible");
 
         return new EvaluationSummary(
                 new EvaluationId(n.getId()),
@@ -611,5 +596,45 @@ public class JpaGradeEngine implements GradeEngine {
     @Override
     public void deleteUe(UeId ueId) {
         ueRepository.delete(ueId.value());
+    }
+
+
+    // ------------------------------------------------------------- Helpers
+
+    /**
+     * Statut cohérent avec l'invariant du contrat : une note existe si et seulement si le statut est GRADED.
+     */
+    private static EvaluationStatus statusOf(Note n) {
+        EvaluationStatus status;
+        try {
+            status = EvaluationStatus.valueOf(n.getStatus().toUpperCase());
+        } catch (Exception e) {
+            status = EvaluationStatus.PLANNED;
+        }
+        if (status == EvaluationStatus.CANCELLED) {
+            return EvaluationStatus.CANCELLED;
+        }
+        boolean hasResult = n.isAbsent() || n.getValeur() != null;
+        if (hasResult) {
+            return EvaluationStatus.GRADED;
+        }
+        // Marquée "notée" mais sans résultat : on la considère en attente de note
+        return status == EvaluationStatus.GRADED ? EvaluationStatus.AWAITING_GRADE : status;
+    }
+
+    /**
+     * Décompte par statut. Ordre du constructeur : (planned, awaitingGrade, graded, cancelled).
+     */
+    private static EvaluationProgress progressOf(Collection<Note> notes) {
+        int planned = 0, awaiting = 0, graded = 0, cancelled = 0;
+        for (Note n : notes) {
+            switch (statusOf(n)) {
+                case PLANNED -> planned++;
+                case AWAITING_GRADE -> awaiting++;
+                case GRADED -> graded++;
+                case CANCELLED -> cancelled++;
+            }
+        }
+        return new EvaluationProgress(planned, awaiting, graded, cancelled);
     }
 }

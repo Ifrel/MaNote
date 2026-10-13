@@ -3,15 +3,17 @@ package api.views.screens;
 import api.controllers.AppController;
 import api.views.format.Formatters;
 import api.views.widgets.EmptyState;
-import api.views.widgets.StatCard;
+import api.views.widgets.ScoreRing;
 import api.views.widgets.StatusBadge;
 import api.views.widgets.UECard;
 import application.engine.GradeEngine;
 import application.engine.model.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import org.kordamp.ikonli.feather.Feather;
@@ -22,38 +24,44 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Écran 1 — Tableau de bord (DashboardScreen).
- * Vue synthétique de la situation académique de l'étudiant.
+ * Écran 1 — Tableau de bord.
+ * Un seul élément dominant (l'anneau de moyenne du semestre), le reste reste sobre.
  */
 public class DashboardScreen extends ScrollPane {
 
+    private static final double PAGE_PADDING = 28;
+    private static final double GRID_GAP = 16;
+    private static final double CARD_MIN_WIDTH = 270;
+
     private final AppController controller;
-    private final VBox content = new VBox(24);
+    private final VBox content = new VBox(26);
+    private FlowPane ueGrid;
 
     public DashboardScreen(AppController controller) {
         this.controller = controller;
 
         setFitToWidth(true);
         setStyle("-fx-background-color: transparent; -fx-padding: 0;");
-        content.setPadding(new Insets(24));
+        content.setPadding(new Insets(PAGE_PADDING));
         setContent(content);
 
-        // Recharger quand le semestre actif change
         controller.getContext().activeSemesterProperty().addListener((obs, oldV, newV) -> refresh());
+        viewportBoundsProperty().addListener((obs, oldV, newV) -> relayoutGrid());
         refresh();
     }
 
     public void refresh() {
         content.getChildren().clear();
+        ueGrid = null;
         SemesterSummary sem = controller.getContext().getActiveSemester();
         AcademicYearSummary year = controller.getContext().getActiveYear();
 
         if (year == null) {
             content.getChildren().add(new EmptyState(
                     Feather.BOOK_OPEN,
-                    "Bienvenue dans MaNote !",
-                    "Votre base de données est actuellement vierge. Vous pouvez commencer en créant votre première année ou en important votre fichier cursus.yaml.",
-                    "Créer une Année Universitaire",
+                    "Bienvenue dans MaNote",
+                    "Votre base est vide pour l'instant. Créez votre première année ou importez votre fichier cursus.yaml.",
+                    "Créer une année universitaire",
                     () -> {
                         api.views.dialogs.YearDialog dlg = new api.views.dialogs.YearDialog(null);
                         dlg.showAndWait().ifPresent(draft -> controller.createAcademicYear(draft, id -> refresh()));
@@ -66,8 +74,8 @@ public class DashboardScreen extends ScrollPane {
             content.getChildren().add(new EmptyState(
                     Feather.CALENDAR,
                     "Aucun semestre configuré",
-                    "Ajoutez un premier semestre à l'année \"" + year.label() + "\" pour commencer à saisir vos UE et notes.",
-                    "Ajouter un Semestre",
+                    "Ajoutez un premier semestre à « " + year.label() + " » pour saisir vos UE et vos notes.",
+                    "Ajouter un semestre",
                     () -> {
                         api.views.dialogs.SemesterDialog dlg = new api.views.dialogs.SemesterDialog(
                                 controller.getEngine().getAcademicYears(), year.id(), null);
@@ -78,175 +86,239 @@ public class DashboardScreen extends ScrollPane {
         }
 
         GradeEngine engine = controller.getEngine();
+        content.getChildren().addAll(
+                buildHeader(year, sem),
+                buildHero(sem),
+                buildUeSection(engine, sem),
+                buildBottom(engine, sem)
+        );
+        relayoutGrid();
+    }
 
-        // 1. En-tête de bienvenue
-        VBox headerBox = new VBox(4);
-        Label welcomeLabel = new Label("Tableau de bord académique");
-        welcomeLabel.getStyleClass().add("heading-xl");
+    // ------------------------------------------------------------------ en-tête & hero
 
-        String subtitleText = (year != null ? year.programme() + " • " + year.label() + " • " : "") + sem.label();
-        Label subtitleLabel = new Label(subtitleText);
-        subtitleLabel.getStyleClass().add("text-muted");
-        headerBox.getChildren().addAll(welcomeLabel, subtitleLabel);
-        content.getChildren().add(headerBox);
+    private Node buildHeader(AcademicYearSummary year, SemesterSummary sem) {
+        VBox box = new VBox(4);
+        Label title = new Label("Tableau de bord");
+        title.getStyleClass().add("heading-xl");
+        Label subtitle = new Label(year.programme() + " • " + year.label() + " • " + sem.label());
+        subtitle.getStyleClass().add("text-muted");
+        box.getChildren().addAll(title, subtitle);
+        return box;
+    }
 
-        // 2. Grille de StatCards
-        HBox kpiGrid = new HBox(16);
-        kpiGrid.setAlignment(Pos.CENTER_LEFT);
+    private Node buildHero(SemesterSummary sem) {
+        ScoreRing ring = new ScoreRing(156, 13);
+        ring.setResult(sem.average(), sem.validation().state());
 
-        // KPI 1: Moyenne générale calculée par le moteur
-        String avgText = Formatters.formatComputedResult(sem.average());
-        StatCard avgCard = new StatCard("Moyenne Semestrielle", avgText,
-                sem.validation().label(), Feather.AWARD);
-        avgCard.setBadge(StatusBadge.ofValidation(sem.validation()));
-        HBox.setHgrow(avgCard, Priority.ALWAYS);
+        Label kicker = new Label("Moyenne du semestre");
+        kicker.getStyleClass().add("stat-label");
+        Label semName = new Label(sem.label());
+        semName.getStyleClass().add("heading-lg");
+        StatusBadge badge = StatusBadge.ofValidation(sem.validation());
 
-        // KPI 2: Progression des évaluations
+        String detailText = !sem.validation().detail().isBlank()
+                ? sem.validation().detail()
+                : Formatters.formatComputedResult(sem.average());
+        Label detail = new Label(detailText);
+        detail.getStyleClass().add("text-muted");
+        detail.setWrapText(true);
+
+        VBox summary = new VBox(8, kicker, semName, new HBox(badge), detail);
+        summary.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(summary, Priority.ALWAYS);
+
+        HBox top = new HBox(30, ring, summary);
+        top.setAlignment(Pos.CENTER_LEFT);
+
         EvaluationProgress prog = sem.progress();
-        String progText = String.format("%d / %d", prog.graded(), prog.total());
-        String progSub = prog.total() > 0 ? String.format("%.0f%% des évaluations notées", prog.gradedRatio() * 100) : "Aucune évaluation";
-        StatCard progCard = new StatCard("Progression", progText, progSub, Feather.CHECK_CIRCLE);
-        HBox.setHgrow(progCard, Priority.ALWAYS);
+        HBox metrics = new HBox();
+        metrics.getStyleClass().add("hero-metrics");
+        metrics.getChildren().addAll(
+                metric("Évaluations notées", prog.graded() + " / " + prog.total(),
+                        prog.total() > 0 ? String.format("%.0f %% du semestre", prog.gradedRatio() * 100) : "Aucune évaluation",
+                        prog.total() > 0 ? prog.gradedRatio() : null, false),
+                metric("Volume", sem.totalCredits() + " ECTS", sem.ueCount() + " UE", null, true),
+                metric("À venir", prog.awaitingGrade() + " en attente", prog.planned() + " prévue(s)", null, true)
+        );
 
-        // KPI 3: Crédits du semestre
-        StatCard creditCard = new StatCard("Volume ECTS", sem.totalCredits() + " ECTS",
-                sem.ueCount() + " Unités d'Enseignement", Feather.BOOK_OPEN);
-        HBox.setHgrow(creditCard, Priority.ALWAYS);
+        VBox hero = new VBox(22, top, metrics);
+        hero.getStyleClass().add("hero");
+        return hero;
+    }
 
-        // KPI 4: Notes en attente
-        String pendingText = prog.awaitingGrade() + " en attente";
-        String pendingSub = prog.planned() + " prévue(s) à venir";
-        StatCard pendingCard = new StatCard("Échéances & Attente", pendingText, pendingSub, Feather.CLOCK);
-        HBox.setHgrow(pendingCard, Priority.ALWAYS);
+    private VBox metric(String label, String value, String caption, Double progress, boolean divided) {
+        Label l = new Label(label);
+        l.getStyleClass().add("stat-label");
+        Label v = new Label(value);
+        v.getStyleClass().add("metric-value");
+        Label c = new Label(caption);
+        c.getStyleClass().add("text-tertiary");
+        c.setStyle("-fx-font-size: 11px;");
 
-        kpiGrid.getChildren().addAll(avgCard, progCard, creditCard, pendingCard);
-        content.getChildren().add(kpiGrid);
+        VBox box = new VBox(3, l, v, c);
+        if (progress != null) {
+            ProgressBar bar = new ProgressBar(progress);
+            bar.setMaxWidth(Double.MAX_VALUE);
+            bar.setMinHeight(6);
+            bar.setPrefHeight(6);
+            VBox.setMargin(bar, new Insets(4, 0, 0, 0));
+            box.getChildren().add(bar);
+        }
+        box.getStyleClass().add("metric");
+        if (divided) box.getStyleClass().add("metric-divided");
+        HBox.setHgrow(box, Priority.ALWAYS);
+        box.setPrefWidth(0);
+        box.setMaxWidth(Double.MAX_VALUE);
+        return box;
+    }
 
-        // 3. Section UE
-        VBox ueSection = new VBox(12);
-        HBox ueHeader = new HBox(8);
-        ueHeader.setAlignment(Pos.CENTER_LEFT);
-        Label ueTitle = new Label("Unités d'Enseignement (UE)");
-        ueTitle.getStyleClass().add("heading-lg");
-        ueHeader.getChildren().add(ueTitle);
+    // ------------------------------------------------------------------ UE
+
+    private Node buildUeSection(GradeEngine engine, SemesterSummary sem) {
+        VBox section = new VBox(14);
 
         List<UeSummary> ues = engine.getUes(sem.id());
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label("Unités d'enseignement");
+        title.getStyleClass().add("heading-lg");
+        Label count = new Label(String.valueOf(ues.size()));
+        count.getStyleClass().addAll("badge", "badge-neutral");
+        header.getChildren().addAll(title, count);
+
         if (ues.isEmpty()) {
-            Button addFirstUeBtn = new Button("Ajouter votre première UE");
+            Button addFirstUeBtn = new Button("Ajouter une UE");
             addFirstUeBtn.getStyleClass().add("btn-primary");
             addFirstUeBtn.setOnAction(e -> {
                 api.views.dialogs.UeDialog dlg = new api.views.dialogs.UeDialog(List.of(sem), sem.id(), null);
                 dlg.showAndWait().ifPresent(draft -> controller.createUe(draft, id -> refresh()));
             });
-            VBox emptyUeBox = new VBox(10, new Label("Aucune Unité d'Enseignement pour le moment dans ce semestre."), addFirstUeBtn);
-            emptyUeBox.getStyleClass().add("card");
-            emptyUeBox.setAlignment(Pos.CENTER);
-            emptyUeBox.setStyle("-fx-padding: 24px;");
-            ueSection.getChildren().addAll(ueHeader, emptyUeBox);
+            Label hint = new Label("Aucune UE dans ce semestre pour le moment.");
+            hint.getStyleClass().add("text-muted");
+            VBox empty = new VBox(12, hint, addFirstUeBtn);
+            empty.getStyleClass().add("card");
+            empty.setAlignment(Pos.CENTER);
+            empty.setStyle("-fx-padding: 28px;");
+            section.getChildren().addAll(header, empty);
         } else {
-            FlowPane ueGrid = new FlowPane(16, 16);
-            ueGrid.setPrefWrapLength(900);
+            ueGrid = new FlowPane(GRID_GAP, GRID_GAP);
             for (UeSummary ue : ues) {
-                UECard card = new UECard(ue, clickedUe -> controller.navigateToUe(clickedUe.id()));
-                card.setPrefWidth(280);
+                UECard card = new UECard(ue, clicked -> controller.navigateToUe(clicked.id()));
+                card.setPrefWidth(300);
                 ueGrid.getChildren().add(card);
             }
-            ueSection.getChildren().addAll(ueHeader, ueGrid);
+            section.getChildren().addAll(header, ueGrid);
         }
-        content.getChildren().add(ueSection);
+        return section;
+    }
 
-        // 4. Deux colonnes : Dernières notes obtenues & Prochaines échéances
-        HBox bottomSection = new HBox(20);
+    /**
+     * Répartit les cartes d'UE en colonnes égales selon la largeur disponible.
+     */
+    private void relayoutGrid() {
+        if (ueGrid == null) return;
+        double available = getViewportBounds().getWidth() - 2 * PAGE_PADDING;
+        if (available <= 0) return;
+        int cols = Math.max(1, (int) Math.floor((available + GRID_GAP) / (CARD_MIN_WIDTH + GRID_GAP)));
+        double width = (available - GRID_GAP * (cols - 1)) / cols;
+        ueGrid.setPrefWrapLength(available);
+        for (Node n : ueGrid.getChildren()) {
+            if (n instanceof Region r) r.setPrefWidth(width);
+        }
+    }
 
-        // Colonne Gauche : Dernières notes
-        VBox gradesCol = new VBox(12);
-        HBox.setHgrow(gradesCol, Priority.ALWAYS);
-        Label gradesTitle = new Label("Dernières notes enregistrées");
-        gradesTitle.getStyleClass().add("heading-md");
-        gradesCol.getChildren().add(gradesTitle);
+    // ------------------------------------------------------------------ notes récentes & échéances
 
-        VBox gradesCard = new VBox(10);
+    private Node buildBottom(GradeEngine engine, SemesterSummary sem) {
+        HBox bottom = new HBox(20);
+
+        // Dernières notes
+        VBox gradesCard = new VBox();
         gradesCard.getStyleClass().add("card");
+        List<EvaluationSummary> graded = engine.getEvaluations(
+                EvaluationFilter.all().withSemester(sem.id()).withStatus(EvaluationStatus.GRADED));
+        graded.sort(Comparator.comparing((EvaluationSummary e) -> e.date().orElse(LocalDate.MIN)).reversed());
 
-        List<EvaluationSummary> gradedEvals = engine.getEvaluations(
-                EvaluationFilter.all().withSemester(sem.id()).withStatus(EvaluationStatus.GRADED)
-        );
-        gradedEvals.sort(Comparator.comparing((EvaluationSummary e) -> e.date().orElse(LocalDate.MIN)).reversed());
-
-        if (gradedEvals.isEmpty()) {
-            gradesCard.getChildren().add(new Label("Aucune note encore enregistrée pour ce semestre."));
+        if (graded.isEmpty()) {
+            gradesCard.getChildren().add(emptyHint("Aucune note enregistrée pour ce semestre."));
         } else {
-            for (int i = 0; i < Math.min(5, gradedEvals.size()); i++) {
-                EvaluationSummary ev = gradedEvals.get(i);
-                HBox row = new HBox(12);
-                row.setAlignment(Pos.CENTER_LEFT);
-                row.setStyle("-fx-padding: 8px 0; -fx-border-color: -fx-border-subtle transparent transparent transparent; -fx-border-width: 1px;");
-
-                VBox info = new VBox(2);
-                Label t = new Label(ev.title());
-                t.getStyleClass().add("heading-sm");
-                Label sub = new Label(ev.ue().code() + " • " + Formatters.formatDate(ev.date()));
-                sub.getStyleClass().add("text-tertiary");
-                info.getChildren().addAll(t, sub);
-
-                Region sp = new Region();
-                HBox.setHgrow(sp, Priority.ALWAYS);
-
+            for (int i = 0; i < Math.min(5, graded.size()); i++) {
+                EvaluationSummary ev = graded.get(i);
                 Label score = new Label(Formatters.formatGrade(ev.grade(), ev.maxPoints()));
                 score.getStyleClass().add("heading-md");
-
-                row.getChildren().addAll(info, sp, score);
-                gradesCard.getChildren().add(row);
+                gradesCard.getChildren().add(listRow(null, ev.title(),
+                        ev.ue().code() + " • " + Formatters.formatDate(ev.date()), score, i == 0));
             }
         }
-        gradesCol.getChildren().add(gradesCard);
 
-        // Colonne Droite : Prochaines échéances
-        VBox upcomingCol = new VBox(12);
-        HBox.setHgrow(upcomingCol, Priority.ALWAYS);
-        Label upcomingTitle = new Label("Prochaines échéances");
-        upcomingTitle.getStyleClass().add("heading-md");
-        upcomingCol.getChildren().add(upcomingTitle);
-
-        VBox upcomingCard = new VBox(10);
+        // Prochaines échéances
+        VBox upcomingCard = new VBox();
         upcomingCard.getStyleClass().add("card");
+        List<EvaluationSummary> upcoming = engine.getEvaluations(
+                EvaluationFilter.all().withSemester(sem.id())
+                        .withStatus(EvaluationStatus.PLANNED, EvaluationStatus.AWAITING_GRADE));
+        upcoming.sort(Comparator.comparing(e -> e.date().orElse(LocalDate.MAX)));
 
-        List<EvaluationSummary> upcomingEvals = engine.getEvaluations(
-                EvaluationFilter.all().withSemester(sem.id()).withStatus(EvaluationStatus.PLANNED, EvaluationStatus.AWAITING_GRADE)
-        );
-        upcomingEvals.sort(Comparator.comparing(e -> e.date().orElse(LocalDate.MAX)));
-
-        if (upcomingEvals.isEmpty()) {
-            upcomingCard.getChildren().add(new Label("Aucune évaluation prévue pour le moment."));
+        if (upcoming.isEmpty()) {
+            upcomingCard.getChildren().add(emptyHint("Aucune évaluation prévue pour le moment."));
         } else {
-            for (int i = 0; i < Math.min(5, upcomingEvals.size()); i++) {
-                EvaluationSummary ev = upcomingEvals.get(i);
-                HBox row = new HBox(12);
-                row.setAlignment(Pos.CENTER_LEFT);
-                row.setStyle("-fx-padding: 8px 0; -fx-border-color: -fx-border-subtle transparent transparent transparent; -fx-border-width: 1px;");
-
-                FontIcon calIcon = new FontIcon(Feather.CALENDAR);
-                calIcon.getStyleClass().add("text-tertiary");
-
-                VBox info = new VBox(2);
-                Label t = new Label(ev.title());
-                t.getStyleClass().add("heading-sm");
-                Label sub = new Label(ev.ue().code() + " • " + Formatters.formatDate(ev.date()));
-                sub.getStyleClass().add("text-tertiary");
-                info.getChildren().addAll(t, sub);
-
-                Region sp = new Region();
-                HBox.setHgrow(sp, Priority.ALWAYS);
-
-                StatusBadge b = StatusBadge.ofEvaluationStatus(ev.status());
-
-                row.getChildren().addAll(calIcon, info, sp, b);
-                upcomingCard.getChildren().add(row);
+            for (int i = 0; i < Math.min(5, upcoming.size()); i++) {
+                EvaluationSummary ev = upcoming.get(i);
+                upcomingCard.getChildren().add(listRow(iconChip(Feather.CALENDAR), ev.title(),
+                        ev.ue().code() + " • " + Formatters.formatDate(ev.date()),
+                        StatusBadge.ofEvaluationStatus(ev.status()), i == 0));
             }
         }
-        upcomingCol.getChildren().add(upcomingCard);
 
-        bottomSection.getChildren().addAll(gradesCol, upcomingCol);
-        content.getChildren().add(bottomSection);
+        bottom.getChildren().addAll(
+                panel("Dernières notes", gradesCard),
+                panel("Prochaines échéances", upcomingCard));
+        return bottom;
+    }
+
+    private VBox panel(String title, Node body) {
+        Label t = new Label(title);
+        t.getStyleClass().add("heading-md");
+        VBox box = new VBox(12, t, body);
+        HBox.setHgrow(box, Priority.ALWAYS);
+        box.setPrefWidth(0);
+        box.setMaxWidth(Double.MAX_VALUE);
+        return box;
+    }
+
+    private Label emptyHint(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("text-muted");
+        l.setStyle("-fx-padding: 12px 0;");
+        return l;
+    }
+
+    private Node iconChip(Feather icon) {
+        FontIcon fi = new FontIcon(icon);
+        fi.setIconSize(16);
+        StackPane chip = new StackPane(fi);
+        chip.getStyleClass().add("icon-chip");
+        return chip;
+    }
+
+    private HBox listRow(Node leading, String title, String sub, Node trailing, boolean first) {
+        HBox row = new HBox(12);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.getStyleClass().add("list-row");
+        if (first) row.getStyleClass().add("list-row-first");
+
+        Label t = new Label(title);
+        t.getStyleClass().add("heading-sm");
+        Label s = new Label(sub);
+        s.getStyleClass().add("text-tertiary");
+        VBox info = new VBox(2, t, s);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        if (leading != null) row.getChildren().add(leading);
+        row.getChildren().addAll(info, spacer, trailing);
+        return row;
     }
 }

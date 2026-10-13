@@ -11,90 +11,87 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
- * Carte visuelle représentant une Unité d'Enseignement (UE).
+ * Carte d'une Unité d'Enseignement : la moyenne est l'élément dominant, teintée selon la validation.
  */
 public class UECard extends VBox {
 
     public UECard(UeSummary ue, Consumer<UeSummary> onClick) {
-        getStyleClass().addAll("card-interactive");
-        setSpacing(10);
+        getStyleClass().add("card-interactive");
+        setSpacing(12);
 
-        // Header: Code UE, Crédits ECTS, et Badge Validation
+        // Code, crédits, statut
         HBox header = new HBox(8);
         header.setAlignment(Pos.CENTER_LEFT);
-
         Label codeLabel = new Label(ue.code());
         codeLabel.getStyleClass().add("heading-sm");
-
         Label creditBadge = new Label(ue.credits() + " ECTS");
         creditBadge.getStyleClass().addAll("badge", "badge-neutral");
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+        header.getChildren().addAll(codeLabel, creditBadge, spacer, StatusBadge.ofValidation(ue.validation()));
 
-        StatusBadge statusBadge = StatusBadge.ofValidation(ue.validation());
-
-        header.getChildren().addAll(codeLabel, creditBadge, spacer, statusBadge);
-
-        // Intitulé de l'UE
+        // Intitulé (deux lignes réservées pour aligner les cartes d'une même rangée)
         Label nameLabel = new Label(ue.name());
-        nameLabel.getStyleClass().add("heading-md");
+        nameLabel.getStyleClass().addAll("heading-md");
         nameLabel.setWrapText(true);
+        nameLabel.setMinHeight(40);
+        nameLabel.setMaxHeight(40);
+        nameLabel.setAlignment(Pos.TOP_LEFT);
 
-        // Moyenne et Progression
+        // Moyenne
         HBox scoreBox = new HBox(8);
         scoreBox.setAlignment(Pos.BASELINE_LEFT);
-
         Label scoreValue = new Label();
-        scoreValue.getStyleClass().add("heading-lg");
-
+        scoreValue.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
         if (ue.average() instanceof ComputedResult.Value val) {
-            scoreValue.setText(String.format(java.util.Locale.FRENCH, "%.2f", val.value()));
-            Label outOf = new Label("/ " + String.format(java.util.Locale.FRENCH, "%.0f", val.outOf()));
+            scoreValue.setText(String.format(Locale.FRENCH, "%.2f", val.value()));
+            scoreValue.getStyleClass().add(ScoreRing.tone(ue.validation().state()));
+            Label outOf = new Label("/ " + String.format(Locale.FRENCH, "%.0f", val.outOf())
+                    + (val.nature() == application.engine.model.ResultNature.FINAL ? "" : " · " + natureLabel(val)));
             outOf.getStyleClass().add("text-muted");
             scoreBox.getChildren().addAll(scoreValue, outOf);
         } else {
             scoreValue.setText("—");
-            Label pendingText = new Label("Pas encore de note");
-            pendingText.getStyleClass().add("text-muted");
-            scoreBox.getChildren().addAll(scoreValue, pendingText);
+            scoreValue.getStyleClass().add("text-tertiary");
+            Label pending = new Label("Pas encore de note");
+            pending.getStyleClass().add("text-muted");
+            scoreBox.getChildren().addAll(scoreValue, pending);
         }
 
-        // Barre de progression des évaluations
+        // Progression
         EvaluationProgress progress = ue.progress();
-        VBox progressBox = new VBox(4);
         HBox progressInfo = new HBox(8);
         progressInfo.setAlignment(Pos.CENTER_LEFT);
-
         Label progressLabel = new Label(String.format("%d/%d évaluée(s)", progress.graded(), progress.total()));
         progressLabel.getStyleClass().add("text-tertiary");
         progressLabel.setStyle("-fx-font-size: 11px;");
-
         Region pSpacer = new Region();
         HBox.setHgrow(pSpacer, Priority.ALWAYS);
-
-        if (ue.attention().isPresent()) {
-            Label warn = new Label(ue.attention().get());
+        progressInfo.getChildren().addAll(progressLabel, pSpacer);
+        ue.attention().ifPresent(text -> {
+            Label warn = new Label(text);
             warn.getStyleClass().addAll("badge", "badge-warning");
             warn.setStyle("-fx-font-size: 10px;");
-            progressInfo.getChildren().addAll(progressLabel, pSpacer, warn);
-        } else {
-            progressInfo.getChildren().addAll(progressLabel, pSpacer);
-        }
+            progressInfo.getChildren().add(warn);
+        });
 
-        ProgressBar progressBar = new ProgressBar(progress.gradedRatio());
-        progressBar.setMaxWidth(Double.MAX_VALUE);
-        progressBar.setStyle("-fx-accent: -fx-primary-600; -fx-pref-height: 6px;");
+        ProgressBar bar = new ProgressBar(progress.gradedRatio());
+        bar.setMaxWidth(Double.MAX_VALUE);
+        bar.setMinHeight(6);
+        bar.setPrefHeight(6);
 
-        progressBox.getChildren().addAll(progressInfo, progressBar);
-
-        getChildren().addAll(header, nameLabel, scoreBox, progressBox);
+        getChildren().addAll(header, nameLabel, scoreBox, new VBox(5, progressInfo, bar));
 
         if (onClick != null) {
             setOnMouseClicked(e -> onClick.accept(ue));
         }
+    }
+
+    private static String natureLabel(ComputedResult.Value v) {
+        return v.nature() == application.engine.model.ResultNature.PROVISIONAL ? "provisoire" : "simulé";
     }
 }

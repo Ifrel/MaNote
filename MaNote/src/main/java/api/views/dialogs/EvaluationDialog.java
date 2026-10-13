@@ -1,5 +1,6 @@
 package api.views.dialogs;
 
+import api.views.app.Theme;
 import application.engine.GradeEngine;
 import application.engine.model.*;
 import javafx.geometry.Insets;
@@ -33,10 +34,7 @@ public class EvaluationDialog extends Dialog<EvaluationDraft> {
 
         DialogPane pane = getDialogPane();
         pane.getStyleClass().add("card");
-        pane.getStylesheets().addAll(
-                getClass().getResource("/styles/variables-light.css").toExternalForm(),
-                getClass().getResource("/styles/base.css").toExternalForm()
-        );
+        Theme.styleDialog(pane);
 
         ButtonType saveBtnType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         pane.getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);

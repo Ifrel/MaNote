@@ -1,5 +1,6 @@
 package api.views.dialogs;
 
+import api.views.app.Theme;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -20,10 +21,7 @@ public final class ConfirmationDialog {
         alert.setHeaderText(header);
         alert.setContentText(content);
 
-        alert.getDialogPane().getStylesheets().addAll(
-                ConfirmationDialog.class.getResource("/styles/variables-light.css").toExternalForm(),
-                ConfirmationDialog.class.getResource("/styles/base.css").toExternalForm()
-        );
+        Theme.styleDialog(alert.getDialogPane());
         alert.getDialogPane().getStyleClass().add("card");
 
         Button okBtn = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);

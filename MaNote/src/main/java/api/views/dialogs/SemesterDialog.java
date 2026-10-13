@@ -1,5 +1,6 @@
 package api.views.dialogs;
 
+import api.views.app.Theme;
 import application.engine.model.AcademicYearId;
 import application.engine.model.AcademicYearSummary;
 import application.engine.model.SemesterDraft;
@@ -28,10 +29,8 @@ public class SemesterDialog extends Dialog<SemesterDraft> {
 
         DialogPane pane = getDialogPane();
         pane.getStyleClass().add("card");
-        pane.getStylesheets().addAll(
-                getClass().getResource("/styles/variables-light.css").toExternalForm(),
-                getClass().getResource("/styles/base.css").toExternalForm()
-        );
+        Theme.styleDialog(pane);
+
 
         ButtonType saveBtnType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         pane.getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
